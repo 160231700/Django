@@ -91,7 +91,7 @@ def update_record(request, pk):
             return redirect("dashboard")
     
     context = {'update_form': form}
-    return render(request, 'website.update-record.html',context=context)
+    return render(request, 'website/update-record.html',context=context)
 
 #Read a single record
 @login_required(login_url='my-login')
@@ -100,3 +100,11 @@ def singular_record(request,pk):
     one_record = Record.objects.get(id=pk)
     context = {'record':one_record}
     return render(request, 'website/view-record.html',context=context)
+
+#Delete a record
+@login_required(login_url='my-login')
+def delete_record(request, pk):
+    record = Record.objects.get(id=pk)
+    record.delete()
+
+    return redirect("dashboard")
