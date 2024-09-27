@@ -1,6 +1,7 @@
 from django.contrib.auth.models import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from .forms import CreateUserForm, LoginForm, CreateRecordForm, UpdateRecordForm
 from .models import Record
@@ -20,7 +21,7 @@ def register(request):
         print("The method has been posted")
         if form.is_valid():
             form.save()
-            print("Redirecting")
+            messages.success(request, "Account created successfully!")
             return redirect('my-login')
 
     context = {'form':form}
@@ -38,7 +39,7 @@ def my_login(request):
         if form.is_valid():
             username = request.POST.get('username')
             password = request.POST.get('password')
-
+    
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
@@ -52,7 +53,7 @@ def my_login(request):
 
 def user_logout(request):
 
-    auth.logout(request)
+    auth.logout(requestmessages.success(request, "Logout success!"))
     return redirect("my-login")
 
 #Dashboard -
@@ -61,6 +62,12 @@ def dashboard(request):
     my_records = Record.objects.all()
     context = {'records': my_records}
     return render(request, 'website/dashboard.html', context=context)
+
+#Testing page
+@login_required(login_url='my-login')
+def testing_page_route(request):
+    return render(request,'website/testing_page.html')
+
 
 #Create a record
 @login_required(login_url='my-login')
@@ -88,6 +95,7 @@ def update_record(request, pk):
 
         if form.is_valid():
             form.save()
+            messages.success(request, "Your record was updated!")
             return redirect("dashboard")
     
     context = {'update_form': form}
@@ -106,5 +114,5 @@ def singular_record(request,pk):
 def delete_record(request, pk):
     record = Record.objects.get(id=pk)
     record.delete()
-
+    messages.success(request, "Your record was deleted!")
     return redirect("dashboard")

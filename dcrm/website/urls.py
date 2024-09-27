@@ -15,6 +15,8 @@ urlpatterns = [
 
     path('record/<int:pk>', views.singular_record,name="record"),
 
+    path('testing_page', views.testing_page_route,name="testing_page"),
+
     ################### C R U D ###################
 
     #Create
