@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from .forms import CreateUserForm, LoginForm, CreateRecordForm, UpdateRecordForm
 from .models import Record
+import requests
 
 
 
@@ -68,6 +69,29 @@ def dashboard(request):
 def testing_page_route(request):
     return render(request,'website/testing_page.html')
 
+
+#api page
+@login_required(login_url='my-login')
+def api_page_route(request):
+    #api
+    KEY = "d0eb91e0d7c99a16390a7e45a8de4172" #Usually hidden, used from another file
+    BASE_URL = "http://api.openweathermap.org/data/2.5/weather?q="
+    city = "Worksop"
+    url = BASE_URL + city + "&appid=" + KEY
+    response = requests.get(url).json()
+    KELVIN = 273.15
+    weather_data = {
+        "city":city,
+        "min_temp":float(response["main"]["temp_min"])-KELVIN,
+        "max_temp":float(response["main"]["temp_max"])-KELVIN,
+        "current_temp":float(response["main"]["temp"])-KELVIN,
+        "humidity":float(response["main"]["temp"])-KELVIN,
+        "wind_speed":response["wind"]["speed"]
+
+    }
+
+    context = {'weather':weather_data}
+    return render(request, 'website/api.html',context=context)
 
 #Create a record
 @login_required(login_url='my-login')

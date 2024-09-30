@@ -1,7 +1,19 @@
 {% extends 'website/base.html' %}
-
+{% load static %}
 {% block content %}
-
-<h1>Congrats</h1>
+    <br>
+    <div class="text-center">
+        <hr>
+        <div class="container">
+            <div class="card" style="width: 18rem;">
+            <img class="card-image-top"src="{% static 'images/shrekcake.jpeg' %}" alt="Worst birthday cake ever" width="286px">
+            <div class="card-body">
+                <h5 class="card-title">The best birthday cake you could ever own</h5>
+                <p class="card-text">Lovingly crafted by Frankie J Belifiore. </p>
+                <a href="{% url 'dashboard' %}" class="btn btn-primary"> Go elsewhere. Now.</a>
+            </div>
+            <h1>Congrats that's nightmare fuel</h1>
+        </div>
+    </div>
 
 {% endblock %}

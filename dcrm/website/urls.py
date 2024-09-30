@@ -17,6 +17,8 @@ urlpatterns = [
 
     path('testing_page', views.testing_page_route,name="testing_page"),
 
+    path('api_page', views.api_page_route,name='api_page'),
+
     ################### C R U D ###################
 
     #Create

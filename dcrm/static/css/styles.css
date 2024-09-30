@@ -1,5 +1,11 @@
 h1 {
-    color:lime
+    color:lime;
+}
+p{
+    color:red;
+}
+.container{
+    align-items: center;
 }
 
 .form-layout{
