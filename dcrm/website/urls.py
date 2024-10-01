@@ -19,6 +19,8 @@ urlpatterns = [
 
     path('api_page', views.api_page_route,name='api_page'),
 
+    path('game_data', views.game_data_route, name="game_data"),
+
     ################### C R U D ###################
 
     #Create

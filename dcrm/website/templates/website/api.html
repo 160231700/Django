@@ -2,6 +2,13 @@
 
 {% block content %}
 <h1> Blank </h1>
+<h3> Please select a city </h3>
+<form method="POST" action="api_page">
+    {% csrf_token %}
+    <label for="city">City:</label><br>
+    <input type="text" id="city" value="" name="city"><br><br>
+    <input type="submit" value="Submit">
+</form>
 <p>{{weather.max_temp}}</p>
 
 {% endblock %}

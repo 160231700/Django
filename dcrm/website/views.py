@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .forms import CreateUserForm, LoginForm, CreateRecordForm, UpdateRecordForm
-from .models import Record
+from .models import Record, Gamedata
 import requests
 
 
@@ -54,7 +54,7 @@ def my_login(request):
 
 def user_logout(request):
 
-    auth.logout(requestmessages.success(request, "Logout success!"))
+    auth.logout(request.messages.success(request, "Logout success!"))
     return redirect("my-login")
 
 #Dashboard -
@@ -73,26 +73,34 @@ def testing_page_route(request):
 #api page
 @login_required(login_url='my-login')
 def api_page_route(request):
-    #api
-    KEY = "d0eb91e0d7c99a16390a7e45a8de4172" #Usually hidden, used from another file
-    BASE_URL = "http://api.openweathermap.org/data/2.5/weather?q="
-    city = "Worksop"
-    url = BASE_URL + city + "&appid=" + KEY
-    response = requests.get(url).json()
-    KELVIN = 273.15
-    weather_data = {
-        "city":city,
-        "min_temp":float(response["main"]["temp_min"])-KELVIN,
-        "max_temp":float(response["main"]["temp_max"])-KELVIN,
-        "current_temp":float(response["main"]["temp"])-KELVIN,
-        "humidity":float(response["main"]["temp"])-KELVIN,
-        "wind_speed":response["wind"]["speed"]
+    if request.method == "POST":
+        city = request.POST.get('city')
+        if city == "":
+            city = "Worksop"
+        #api
+        KEY = "d0eb91e0d7c99a16390a7e45a8de4172" #Usually hidden, used from another file
+        BASE_URL = "http://api.openweathermap.org/data/2.5/weather?q="
+        url = BASE_URL + city + "&appid=" + KEY
+        response = requests.get(url).json()
+        KELVIN = 273.15
+        weather_data = {
+            "city":city,
+            "min_temp":float(response["main"]["temp_min"])-KELVIN,
+            "max_temp":round(float(response["main"]["temp_max"])-KELVIN,2),
+            "current_temp":float(response["main"]["temp"])-KELVIN,
+            "humidity":float(response["main"]["temp"])-KELVIN,
+            "wind_speed":response["wind"]["speed"]
 
-    }
+        }
 
-    context = {'weather':weather_data}
-    return render(request, 'website/api.html',context=context)
+        context = {'weather':weather_data}
+        return render(request, 'website/api.html',context=context)
 
+@login_required(login_url='my-login')
+def game_data_route(request):
+    data = Gamedata.objects.all()
+    context = {'data':data}
+    return render(request, 'website/game_page.html', context=context)
 #Create a record
 @login_required(login_url='my-login')
 def create_record(request):
