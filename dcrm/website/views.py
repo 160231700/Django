@@ -2,6 +2,7 @@ from django.contrib.auth.models import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib import messages
+from django.conf import settings
 from django.shortcuts import render, redirect
 from .forms import CreateUserForm, LoginForm, CreateRecordForm, UpdateRecordForm
 from .models import Record, Gamedata
@@ -73,28 +74,39 @@ def testing_page_route(request):
 #api page
 @login_required(login_url='my-login')
 def api_page_route(request):
+    print("Loading the api page")
     if request.method == "POST":
-        city = request.POST.get('city')
-        if city == "":
-            city = "Worksop"
-        #api
-        KEY = "d0eb91e0d7c99a16390a7e45a8de4172" #Usually hidden, used from another file
-        BASE_URL = "http://api.openweathermap.org/data/2.5/weather?q="
-        url = BASE_URL + city + "&appid=" + KEY
-        response = requests.get(url).json()
-        KELVIN = 273.15
-        weather_data = {
-            "city":city,
-            "min_temp":float(response["main"]["temp_min"])-KELVIN,
-            "max_temp":round(float(response["main"]["temp_max"])-KELVIN,2),
-            "current_temp":float(response["main"]["temp"])-KELVIN,
-            "humidity":float(response["main"]["temp"])-KELVIN,
-            "wind_speed":response["wind"]["speed"]
 
+        city = request.POST.get("city")
+        key = settings.MY_API_KEY
+
+        BASE_URL= "http://api.openweathermap.org/data/2.5/weather?q="
+        url = BASE_URL + city +"&appid=" + key
+
+        json_data = requests.get(url).json()
+
+        weather = json_data['weather'][0]['main']
+        KELVIN = 273.15
+        temperature = int(json_data['main']['temp']-KELVIN)
+        min = int(json_data['main']['temp_min']-KELVIN)
+        max = int(json_data['main']['temp_max']-KELVIN)
+        icon = json_data['weather'][0]['icon']
+
+        data = {
+            "location":city,
+            "weather":weather,
+            "temperature":temperature,
+            "min":min,
+            "max":max,
+            "icon":icon
         }
 
-        context = {'weather':weather_data}
+        context={'data':data}
+
         return render(request, 'website/api.html',context=context)
+    else:
+        return render(request, 'website/api.html')
+
 
 @login_required(login_url='my-login')
 def game_data_route(request):

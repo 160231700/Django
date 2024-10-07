@@ -1,14 +1,32 @@
 {% extends 'website/base.html' %}
 
 {% block content %}
-<h1> Blank </h1>
-<h3> Please select a city </h3>
-<form method="POST" action="api_page">
-    {% csrf_token %}
-    <label for="city">City:</label><br>
-    <input type="text" id="city" value="" name="city"><br><br>
-    <input type="submit" value="Submit">
-</form>
-<p>{{weather.max_temp}}</p>
+    <br>
+    <h5> Welcome to the government spy satellite</h5>
+    <br>
+
+    <h5>Please choose a spy location</h5>
+    <form action="api_page" method="POST">
+        {%csrf_token%}
+        <input type="text" id="city" name="city" value=""><br>
+        <input type="submit" value="Submit">
+    </form>
+    <br>
+
+    {% if data %}
+
+        <p>Location: {{data.location}}</p>
+        <p>Weather: {{data.weather}}</p>
+        <p>Temperature: {{data.temperature}}</p>
+        <p>Min: {{data.min}}</p>
+        <p>Max: {{data.max}}</p>
+        <p>Icon Code: {{data.icon}}</p>
+
+        <br>
+        <img src="https://openweathermap.org/img/wn/{{data.icon}}@2x.png" alt="Icon">
+    {% else %}
+        <br>
+        <p> No spy location set</p>
+    {% endif %}
 
 {% endblock %}
